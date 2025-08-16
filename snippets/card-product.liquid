@@ -20,12 +20,51 @@
   Usage:
   {% render 'card-product', show_vendor: section.settings.show_vendor %}
 {% endcomment %}
+ {% style %}
+  #modal-container {
+      position: fixed; /* Change to fixed to cover the viewport */
+      top: 0; /* Align to the top */
+      left: 0; /* Align to the left */
+      width: 100vw; /* Full width of the viewport */
+      height: 100vh; /* Full height of the viewport */
+      background-color: rgba(0, 0, 0, 0.5); /* Optional: semi-transparent background */ */
+      z-index: 1000; /* Ensure it appears above other content */ */
+      display: none;
+  }
+  .collection-add-to-cart {
+    position: absolute;
+    height:10px;
+    width:10px;
+    color:rgb(0, 0, 0);
+    background:rgb(2, 8, 19); 
+    border-radius: 50%;
+    top: 10%;
+    right: 18px;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .collection-add-to-cart:hover {
+    background: #778eb8;
+  }
+  .material-symbols-outlined {
+    color: white;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+  }
+{% endstyle %}
 {%- unless skip_styles -%}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
 
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
-  {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
+   {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
   {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {%- endunless -%}
 {%- if card_product and card_product != empty -%}
@@ -53,10 +92,12 @@
       "
       style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
     >
+    
       <div
         class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
         style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
       >
+        
         {%- if card_product.featured_media -%}
           <div class="card__media{% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}">
             <div class="media media--transparent media--hover-effect">
@@ -105,6 +146,7 @@
               {%- endif -%}
             </div>
           </div>
+  
         {%- endif -%}
         <div class="card__content">
           <div class="card__information">
@@ -120,7 +162,6 @@
                 class="full-unstyled-link"
                 aria-labelledby="StandardCardNoMediaLink-{{ section_id }}-{{ card_product.id }} NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
               >
-                {{ card_product.title | escape }}
               </a>
             </h3>
           </div>
@@ -143,7 +184,7 @@
           </div>
         </div>
       </div>
-      <div class="card__content">
+      {% comment %} <div class="card__content">
         <div class="card__information">
           <h3
             class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"
@@ -204,7 +245,7 @@
               </p>
             {%- endif -%}
 
-            {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+            {% comment %} {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
             {%- if card_product.quantity_price_breaks_configured? -%}
               {% if card_product.variants_count == 1 and quick_add == 'bulk' %}
                 {% liquid
@@ -285,7 +326,7 @@
                 </div>
                 </quantity-popover>
               {% endif %}
-            {%- endif -%}
+            {%- endif -%} {% endcomment %}
           </div>
         </div>
         {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
@@ -565,9 +606,15 @@
             </span>
           {%- endif -%}
         </div>
-      </div>
+      </div> {% endcomment %}
     </div>
   </div>
+
+  <div class="collection-add-to-cart" onclick="showModal('{{ card_product.handle }}')">
+    <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined"> + </span>
+    </span>
+  </div> 
 {%- else -%}
   {%- liquid
     assign ratio = 1
@@ -589,6 +636,7 @@
       <div
         class="card__inner{% if settings.card_style == 'standard' %} color-{{ settings.card_color_scheme }} gradient{% endif %} ratio"
       >
+        
         <div
           class="card__media {% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}"
         >
@@ -622,3 +670,95 @@
     </div>
   </div>
 {%- endif -%}
+<script>
+
+  async function getNewVariant(handle) {
+    let selectedColorOption = document.querySelector('.color-option.selected')
+    let selectedSizeOption = document.querySelector('.size-option.selected')
+
+    const response = await fetch(
+      `/products/${handle}?section_id=product-popup&option_values=${selectedColorOption?.dataset?.id || ''},${selectedSizeOption?.dataset?.id || ''}`
+    );
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const selectedVariantJson = doc.querySelector('script[data-selected-variant]').textContent;
+    return JSON.parse(selectedVariantJson)
+  }
+
+  function changeQuantity(delta) {
+      const currentQuantity = Number(document.getElementById('quantity').innerText);
+      const newQuantity = Math.max(0, currentQuantity + delta);
+      document.getElementById('quantity').textContent = newQuantity;
+  }
+
+  function closeModal() {
+    let item = document.querySelector('.product-popup-modal-overlay')
+    item.addEventListener('click', function(event) {
+      if (event.target === this) {
+        item.remove()
+      }
+    })
+  }
+
+  window.showModal = async function (handle) {
+    let response = await fetch(`/products/${handle}?section_id=product-popup`);
+    let html = await response.text();
+    document.body.insertAdjacentHTML('beforeend', html); // Insert the fetched HTML into the body
+    createListeners();
+    closeModal()
+  };
+
+  function createListeners() {
+    window.changeImage = function (src) {
+      const mainImage = document.querySelector('.product-popup-main-image img');
+      mainImage.src = src;
+    };
+
+    window.selectColor = function (element, color) {
+      document.querySelectorAll('.color-option').forEach((el) => {
+        if (el !== element) {
+          el.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+    };
+
+    window.selectSize = function (element, color) {
+      document.querySelectorAll('.size-option').forEach((el) => {
+        if (el !== element) {
+          el.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+    };
+
+    window.addToCart = async function (handle) {
+      const variant = await getNewVariant(handle);
+      const quantity = Number(document.getElementById('quantity').textContent) || 1
+
+      let formData = {
+       'items': [{
+        'id': variant.id,
+        'quantity': quantity
+        }]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+          window.location.href = '/cart'
+        
+        return response.json();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    };
+  }
+</script>

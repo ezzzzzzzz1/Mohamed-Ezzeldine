@@ -1,0 +1,249 @@
+<style>
+/* Modal styles */
+.product-popup-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 9999999999;
+}
+
+.modal-container-collection .product-popup-modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 400px; /* Reduced max-width to match photo */
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 1.5rem;
+}
+
+/* Close button style */
+.product-popup-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4b5563;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Product images */
+.modal-container-collection .product-popup-product-images {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-container-collection .product-popup-main-image {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.modal-container-collection .product-popup-main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Product details */
+.modal-container-collection .product-popup-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-container-collection .product-popup-product-title {
+    font-size: 1.5rem; /* Adjusted font size */
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-container-collection .product-popup-price {
+    font-size: 1.5rem; /* Adjusted font size */
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-container-collection .product-popup-product-description {
+    color: #4b5563;
+    font-size: 0.875rem; /* Adjusted font size */
+    margin: 0;
+}
+
+/* Color and size selectors */
+.modal-container-collection .product-popup-color-selector,
+.product-popup-size-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modal-container-collection .product-popup-selector-title {
+    font-size: 0.875rem; /* Adjusted font size */
+    font-weight: 600;
+    color: #111827;
+}
+
+.modal-container-collection .product-popup-color-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.modal-container-collection .product-popup-color-option {
+    padding: 0.25rem 0.75rem; /* Adjusted padding for a rectangular shape */
+    border: 1px solid #d1d5db; /* Added border */
+    border-radius: 0; /* Changed to rectangular */
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    background-color: transparent;
+    transition: border-color 0.2s ease;
+}
+
+.modal-container-collection .product-popup-color-option.selected {
+    border-color: #000; /* Thicker border on selection */
+    font-weight: bold;
+}
+
+.modal-container-collection .product-popup-size-selector select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    font-size: 0.875rem;
+    color: #4b5563;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.25rem;
+}
+
+
+/* Add to cart button */
+.modal-container-collection .product-popup-add-to-cart {
+    width: 100%; /* Made button full-width */
+    padding: 0.75rem 1rem;
+    background-color: #000; /* Changed background color to black */
+    color: white;
+    border: none;
+    border-radius: 0; /* Changed to rectangular */
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.modal-container-collection .product-popup-add-to-cart:hover {
+    background-color: #333; /* Darker black on hover */
+}
+
+/* Hide other parts not in the photo */
+.modal-container-collection .product-popup-image-thumbnails,
+.modal-container-collection .product-popup-image-badge,
+.modal-container-collection .product-popup-rating,
+.modal-container-collection .product-popup-quantity-cart {
+    display: none;
+}
+</style>
+
+<div class="product-popup-modal-overlay modal-container-collection">
+    <div class="product-popup-modal">
+        <button class="product-popup-close-btn" onclick="window.closePopup()">×</button>
+        <div class="product-popup-modal-content">
+            <div class="product-popup-product-images">
+                <div class="product-popup-main-image">
+                    <img
+                        src="{{ product.featured_image | image_url }}"
+                        alt="{{ product.title }}"
+                        width="{{ product.featured_image.width }}"
+                        height="{{ product.featured_image.height }}"
+                    >
+                </div>
+            </div>
+
+            <div class="product-popup-product-details">
+                <div>
+                    <h2 class="product-popup-product-title">{{ product.title }}</h2>
+                </div>
+
+                <div>
+                    <span class="product-popup-price">{{ product.price | money_with_currency }}</span>
+                </div>
+
+                <p class="product-popup-product-description">
+                    {{ product.description }}
+                </p>
+
+                {%- comment -%} Replaced with a simplified variant selector to match the image {%- endcomment -%}
+                <div class="product-popup-color-selector">
+                    <span class="product-popup-selector-title">Color</span>
+                    <div class="product-popup-color-options">
+                        {%- for option in product.options_with_values -%}
+                            {%- if option.name == 'Color' -%}
+                                {%- for value in option.values -%}
+                                    <button
+                                        class="product-popup-color-option {%- if option.selected_value == value -%}selected{%- endif -%}"
+                                        onclick="changeColor('{{ value }}')"
+                                    >
+                                        {{ value }}
+                                    </button>
+                                {%- endfor -%}
+                            {%- endif -%}
+                        {%- endfor -%}
+                    </div>
+                </div>
+
+                <div class="product-popup-size-selector">
+                    <span class="product-popup-selector-title">Size</span>
+                    <select onchange="changeSize(this.value)">
+                        <option>Choose your size</option>
+                        {%- for option in product.options_with_values -%}
+                            {%- if option.name == 'Size' -%}
+                                {%- for value in option.values -%}
+                                    <option value="{{ value }}" {%- if option.selected_value == value -%}selected{%- endif -%}>
+                                        {{ value }}
+                                    </option>
+                                {%- endfor -%}
+                            {%- endif -%}
+                        {%- endfor -%}
+                    </select>
+                </div>
+
+                <button class="product-popup-add-to-cart" onclick="window.addToCart('{{ product.handle }}')">
+                    ADD TO CART →
+                </button>
+            </div>
+        </div>
+    </div>
+    <script type="application/json" data-selected-variant>{{ product.selected_or_first_available_variant | json }}</script>
+</div>
+
+
+{% schema %}
+{
+    "name": "Section name",
+    "class": "shopify-section-product-popup",
+    "settings": []
+}
+{% endschema %}
