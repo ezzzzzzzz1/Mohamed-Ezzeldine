@@ -1,0 +1,320 @@
+<div class="gift-guide">
+  <div class="gift-guide__wrapper">
+    <div class="gift-guide__header">
+      <div class="gift-guide__logo">
+        <h2 class="gift-guide__logo-text">{{ section.settings.logo_text }}</h2>
+      </div>
+      <div class="gift-guide__header-text">{{ section.settings.header_text }}</div>
+      <a href="{{ section.settings.header_button_link }}" class="gift-guide__header-button">
+        {{ section.settings.header_button_text }}
+      </a>
+    </div>
+
+    <div class="gift-guide__content-container">
+      <div class="gift-guide__text-content">
+        <h1 class="gift-guide__title">{{ section.settings.title }}</h1>
+        <p class="gift-guide__description">{{ section.settings.description }}</p>
+        <a href="{{ section.settings.main_button_link }}" class="gift-guide__main-button">
+          {{ section.settings.main_button_text }}
+          <span class="gift-guide__main-button-arrow">→</span>
+        </a>
+      </div>
+      <div class="gift-guide__illustration">
+        {%- comment -%} Placeholder for the background illustration. User can upload their own image. {%- endcomment -%}
+        {%- if section.settings.illustration_image != blank -%}
+          <img
+            srcset="
+              {%- if section.settings.illustration_image.width >= 400 -%}{{ section.settings.illustration_image | img_url: '400x' }} 400w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 600 -%}{{ section.settings.illustration_image | img_url: '600x' }} 600w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 800 -%}{{ section.settings.illustration_image | img_url: '800x' }} 800w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 1000 -%}{{ section.settings.illustration_image | img_url: '1000x' }} 1000w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 1200 -%}{{ section.settings.illustration_image | img_url: '1200x' }} 1200w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 1400 -%}{{ section.settings.illustration_image | img_url: '1400x' }} 1400w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 1600 -%}{{ section.settings.illustration_image | img_url: '1600x' }} 1600w,{%- endif -%}
+              {%- if section.settings.illustration_image.width >= 2000 -%}{{ section.settings.illustration_image | img_url: '2000x' }} 2000w,{%- endif -%}
+              {{ section.settings.illustration_image | img_url: 'master' }} {{ section.settings.illustration_image.width }}w
+            "
+            src="{{ section.settings.illustration_image | img_url: '1000x' }}"
+            loading="lazy"
+            class="gift-guide__illustration-image"
+            alt="{{ section.settings.illustration_image.alt | escape }}"
+            width="{{ section.settings.illustration_image.width }}"
+            height="{{ section.settings.illustration_image.height }}"
+          >
+        {%- else -%}
+          <div class="gift-guide__illustration-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" fill="currentColor">
+              <path d="M50 50L80 20V80H20V20L50 50ZM20 20H80V80H20V20Z"/>
+            </svg>
+            <p>Add your background illustration here.</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+  <div class="gift-guide__footer">
+    <p>{{ section.settings.footer_text }}</p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Gift Guide Hero",
+  "tag": "section",
+  "class": "section-gift-guide",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Settings"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo Text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "text",
+      "id": "header_text",
+      "label": "Header Announcement Text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "header_button_text",
+      "label": "Header Button Text",
+      "default": "CHOOSE GIFT →"
+    },
+    {
+      "type": "url",
+      "id": "header_button_link",
+      "label": "Header Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Main Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.</p>"
+    },
+    {
+      "type": "text",
+      "id": "main_button_text",
+      "label": "Main Button Text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "main_button_link",
+      "label": "Main Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Background & Footer"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration_image",
+      "label": "Background Illustration"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer Text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift Guide Hero",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  /* Base styles for the section */
+  .gift-guide {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: #000;
+    position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .gift-guide__wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 2rem;
+  }
+
+  /* Header styles */
+  .gift-guide__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+  }
+
+  .gift-guide__logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+  }
+
+  .gift-guide__header-text {
+    font-size: 1rem;
+    flex-grow: 1; /* Allows text to take up available space */
+    text-align: center;
+    margin: 0 1.5rem; /* Added margin to keep space from logo and button */
+  }
+
+  .gift-guide__header-button {
+    background-color: #FFD700;
+    color: #000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem; /* Changed to rectangular */
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .gift-guide__header-button:hover {
+    background-color: #f7d41f;
+    transform: scale(1.05);
+  }
+
+  /* Main content styles */
+  .gift-guide__content-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+    flex-grow: 1;
+    min-height: calc(100vh - 120px); /* Adjust based on header/footer height */
+    margin-top: 2rem;
+  }
+
+  .gift-guide__text-content {
+    flex: 1;
+    max-width: 50%;
+  }
+
+  .gift-guide__title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .gift-guide__description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .gift-guide__main-button {
+    background-color: #000;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem; /* Changed to rectangular */
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .gift-guide__main-button:hover {
+    background-color: #333;
+    transform: scale(1.05);
+  }
+
+  .gift-guide__main-button-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .gift-guide__main-button:hover .gift-guide__main-button-arrow {
+    transform: translateX(5px);
+  }
+
+  .gift-guide__illustration {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .gift-guide__illustration-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Footer styles */
+  .gift-guide__footer {
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+  }
+
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 1024px) {
+    .gift-guide__content-container {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .gift-guide__text-content {
+      max-width: 100%;
+    }
+    
+    .gift-guide__illustration {
+      display: none; /* Hide the large illustration on smaller screens */
+    }
+
+    .gift-guide__title {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gift-guide__header {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .gift-guide__header-text {
+      order: 3;
+      width: 100%;
+      text-align: center;
+      margin-left: 0;
+    }
+    .gift-guide__title {
+      font-size: 2.5rem;
+    }
+    .gift-guide__description {
+      font-size: 1rem;
+    }
+  }
+</style>
