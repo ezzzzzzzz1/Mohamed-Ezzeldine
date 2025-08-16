@@ -1,15 +1,3 @@
-{%- comment -%}
-  This section creates a customizable "Gift Guide" hero banner with a distinct two-column layout.
-  It includes settings for all text content, button links, and the background illustration,
-  making it fully editable from the Shopify theme editor.
-
-  Instructions:
-  1. Save this code as a new file in your theme's `sections` folder (e.g., `gift-guide.liquid`).
-  2. In your theme editor, add the new "Gift Guide" section to your homepage or any other page.
-{%- endcomment -%}
-
-{{ 'section-gift-guide.css' | asset_url | stylesheet_tag }}
-
 <div class="gift-guide">
   <div class="gift-guide__wrapper">
     <div class="gift-guide__header">
@@ -163,6 +151,8 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     color: #000;
     position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     overflow: hidden;
   }
 
@@ -171,10 +161,6 @@
     margin: 0 auto;
     width: 100%;
     padding: 0 2rem;
-    display: flex; /* Added flexbox to the wrapper */
-    flex-direction: column; /* Added column direction */
-    flex-grow: 1; /* Allows it to take up available space */
-    justify-content: center; /* Vertically centers the content */
   }
 
   /* Header styles */
@@ -222,6 +208,7 @@
     justify-content: space-between;
     gap: 4rem;
     flex-grow: 1;
+    min-height: calc(100vh - 120px); /* Adjust based on header/footer height */
     margin-top: 2rem;
   }
 
